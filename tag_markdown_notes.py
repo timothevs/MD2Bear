@@ -25,8 +25,19 @@ def create_tag_from_path(file_path, base_dir):
         if relative_dir == ".":
             return None  # No subfolder, so no tag based on folder structure
 
+        # Process directory components for CamelCase if they contain spaces
+        path_components = relative_dir.split(os.sep)
+        processed_components = []
+        for component in path_components:
+            if ' ' in component:
+                # Split by space, capitalize each part, then join
+                camel_case_component = "".join(word.capitalize() for word in component.split(' '))
+                processed_components.append(camel_case_component)
+            else:
+                processed_components.append(component)
+
         # Ensure forward slashes for tags, consistent with the example #Ubuntu Apps/Concrete5
-        tag_content = relative_dir.replace(os.sep, '/')
+        tag_content = "/".join(processed_components)
         return f"#{tag_content}"
     except ValueError as e:
         print(f"Error creating tag for {file_path}: {e}")
